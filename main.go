@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	"server/contract"
+	"cica-server/contract"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"

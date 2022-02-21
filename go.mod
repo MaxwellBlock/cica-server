@@ -1,4 +1,4 @@
-module server
+module cica-server
 
 go 1.13
 
