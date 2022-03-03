@@ -9,7 +9,7 @@ var Config config
 
 type config struct {
 	Provider  string `json:"provider"`
-	HelloAddr string `json:"hello_addr"`
+	HelloAddr string `json:"hello"`
 }
 
 func Init() {
