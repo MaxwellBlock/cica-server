@@ -1,0 +1,1 @@
+abigen --abi=Hello.json --pkg=hello --out=./hello/Hello.go

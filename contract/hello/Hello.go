@@ -1,7 +1,7 @@
 // Code generated - DO NOT EDIT.
 // This file is a generated binding and any manual changes will be lost.
 
-package contract
+package hello
 
 import (
 	"math/big"
@@ -27,7 +27,7 @@ var (
 )
 
 // HelloABI is the input ABI used to generate the binding from.
-const HelloABI = "[{\"inputs\":[],\"name\":\"counter\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[],\"name\":\"setCounter\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getCounter\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true}]"
+const HelloABI = "[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"counter\",\"type\":\"uint256\"}],\"name\":\"SetCounter\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"counter\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true},{\"inputs\":[],\"name\":\"setCounter\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getCounter\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"constant\":true}]"
 
 // Hello is an auto generated Go binding around an Ethereum contract.
 type Hello struct {
@@ -252,4 +252,149 @@ func (_Hello *HelloSession) SetCounter() (*types.Transaction, error) {
 // Solidity: function setCounter() returns()
 func (_Hello *HelloTransactorSession) SetCounter() (*types.Transaction, error) {
 	return _Hello.Contract.SetCounter(&_Hello.TransactOpts)
+}
+
+// HelloSetCounterIterator is returned from FilterSetCounter and is used to iterate over the raw logs and unpacked data for SetCounter events raised by the Hello contract.
+type HelloSetCounterIterator struct {
+	Event *HelloSetCounter // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *HelloSetCounterIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(HelloSetCounter)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(HelloSetCounter)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *HelloSetCounterIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *HelloSetCounterIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// HelloSetCounter represents a SetCounter event raised by the Hello contract.
+type HelloSetCounter struct {
+	Account common.Address
+	Counter *big.Int
+	Raw     types.Log // Blockchain specific contextual infos
+}
+
+// FilterSetCounter is a free log retrieval operation binding the contract event 0x50ef2ca26f6df90c78b73ebc44c5627b62f425b94f8c6f6c53fca4edd4c97007.
+//
+// Solidity: event SetCounter(address indexed account, uint256 counter)
+func (_Hello *HelloFilterer) FilterSetCounter(opts *bind.FilterOpts, account []common.Address) (*HelloSetCounterIterator, error) {
+
+	var accountRule []interface{}
+	for _, accountItem := range account {
+		accountRule = append(accountRule, accountItem)
+	}
+
+	logs, sub, err := _Hello.contract.FilterLogs(opts, "SetCounter", accountRule)
+	if err != nil {
+		return nil, err
+	}
+	return &HelloSetCounterIterator{contract: _Hello.contract, event: "SetCounter", logs: logs, sub: sub}, nil
+}
+
+// WatchSetCounter is a free log subscription operation binding the contract event 0x50ef2ca26f6df90c78b73ebc44c5627b62f425b94f8c6f6c53fca4edd4c97007.
+//
+// Solidity: event SetCounter(address indexed account, uint256 counter)
+func (_Hello *HelloFilterer) WatchSetCounter(opts *bind.WatchOpts, sink chan<- *HelloSetCounter, account []common.Address) (event.Subscription, error) {
+
+	var accountRule []interface{}
+	for _, accountItem := range account {
+		accountRule = append(accountRule, accountItem)
+	}
+
+	logs, sub, err := _Hello.contract.WatchLogs(opts, "SetCounter", accountRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(HelloSetCounter)
+				if err := _Hello.contract.UnpackLog(event, "SetCounter", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// ParseSetCounter is a log parse operation binding the contract event 0x50ef2ca26f6df90c78b73ebc44c5627b62f425b94f8c6f6c53fca4edd4c97007.
+//
+// Solidity: event SetCounter(address indexed account, uint256 counter)
+func (_Hello *HelloFilterer) ParseSetCounter(log types.Log) (*HelloSetCounter, error) {
+	event := new(HelloSetCounter)
+	if err := _Hello.contract.UnpackLog(event, "SetCounter", log); err != nil {
+		return nil, err
+	}
+	event.Raw = log
+	return event, nil
 }
