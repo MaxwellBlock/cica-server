@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/gin-gonic/gin"
+	"net/http"
 	"time"
 )
 
@@ -42,14 +44,29 @@ func main() {
 	conf.Init()
 	conn := NewConnector()
 
-	for {
-
-		counter, err := conn.helloContract.GetCounter(nil)
-		if err != nil {
-			panic(err)
+	go func() {
+		for {
+			counter, err := conn.helloContract.GetCounter(nil)
+			if err != nil {
+				panic(err)
+			}
+			fmt.Println(counter.String())
+			time.Sleep(time.Second * 10)
 		}
+	}()
 
-		fmt.Println(counter.String())
-		time.Sleep(time.Second * 10)
-	}
+	gin.SetMode(gin.DebugMode)
+
+	r := gin.Default()
+
+	// 测试连通性
+	r.GET("ping", Ping)
+
+	r.Run(":2022")
+}
+
+func Ping(c *gin.Context) {
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"pong": "ok!",
+	})
 }
