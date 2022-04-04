@@ -19,12 +19,12 @@ type Connector struct {
 }
 
 func NewConnector() *Connector {
-	conn, err := ethclient.Dial(conf.Config.Provider)
+	conn, err := ethclient.Dial(conf.Config.Local.Provider)
 	if err != nil {
 		panic(err)
 	}
 
-	helloContract, err := hello.NewHello(common.HexToAddress(conf.Config.HelloAddr), conn)
+	helloContract, err := hello.NewHello(common.HexToAddress(conf.Config.Remote.Addr.Hello), conn)
 	if err != nil {
 		panic(err)
 	}
@@ -46,7 +46,7 @@ func main() {
 
 	go func() {
 		for {
-			counter, err := conn.helloContract.GetCounter(nil)
+			counter, err := conn.helloContract.Counter(nil)
 			if err != nil {
 				panic(err)
 			}
